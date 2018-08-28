@@ -14,7 +14,7 @@
   list
 
 ##########################################################
-# test add person command, setup state for futuer tests
+# test add person command, setup state for future tests
 ##########################################################
 
   # should catch invalid args format
@@ -36,10 +36,31 @@
   # order of phone and email should not matter
   add Charlie Dickson e/charlie.d@nus.edu.sg p/333333
   list
-  add Dickson Ee e/dickson@nus.edu.sg p/444444
+  add Dickson Ee e/dickson@nus.edu.sg p/334444
   list
-  add Esther Potato p/555555 e/esther@notreal.potato
+  add Esther Potato p/555556 e/esther@notreal.potato
   list
+
+##########################################################
+# test find phone prefix command
+##########################################################
+
+  # empty input is invalid
+  findphoneprefix
+  # non-numerical input is invalid
+  findphoneprefix asdfg
+  # mixed alphanumerical input is invalid
+  findphoneprefix 3a2
+
+  # should only match prefix, not other substring
+  findphoneprefix 56
+  # does not match if none match prefix
+  findphoneprefix 7777
+
+  # find unique prefix
+  findphoneprefix 22
+  # find multiple with same prefix
+  findphoneprefix 33
 
 ##########################################################
 # test find persons command
