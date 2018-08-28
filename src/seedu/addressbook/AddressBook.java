@@ -144,7 +144,7 @@ public class AddressBook {
         NAME,
         EMAIL,
         PHONE
-    };
+    }
 
     /**
      * The number of data elements for a single person.
@@ -424,7 +424,7 @@ public class AddressBook {
     /**
      * Constructs a feedback message for a successful add person command execution.
      *
-     * @see #executeAddPerson(String)
+     * @see #executeAddPerson(String commandArgs)
      * @param addedPerson person who was successfully added
      * @return successful add person feedback message
      */
@@ -541,7 +541,7 @@ public class AddressBook {
     /**
      * Constructs a feedback message for a successful delete person command execution.
      *
-     * @see #executeDeletePerson(String)
+     * @see #executeDeletePerson(String commandArgs)
      * @param deletedPerson successfully deleted
      * @return successful delete person feedback message
      */
@@ -1017,9 +1017,9 @@ public class AddressBook {
     /**
      * Returns true if the given person's data fields are valid
      *
-     * @param person String array representing the person (used in internal data)
+     * @param person HashMap representing the person (used in internal data)
      */
-    private static boolean isPersonDataValid(HashMap<PersonProperty, String>, person) {
+    private static boolean isPersonDataValid(HashMap<PersonProperty, String> person) {
         return isPersonNameValid(person.get(PersonProperty.NAME))
                 && isPersonPhoneValid(person.get(PersonProperty.PHONE))
                 && isPersonEmailValid(person.get(PersonProperty.EMAIL));
