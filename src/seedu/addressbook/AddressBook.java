@@ -112,6 +112,12 @@ public class AddressBook {
     private static final String COMMAND_FIND_PARAMETERS = "KEYWORD [MORE_KEYWORDS]";
     private static final String COMMAND_FIND_EXAMPLE = COMMAND_FIND_WORD + " alice bob charlie";
 
+    private static final String COMMAND_FINDPHONEPREFIX_WORD = "findphoneprefix";
+    private static final String COMMAND_FINDPHONEPREFIX_DESC = "Finds all persons whose phone numbers start with the "
+                                                + "specified prefix and displays them as a list with index numbers.";
+    private static final String COMMAND_FINDPHONEPREFIX_PARAMETERS = "NUMERICAL PREFIX";
+    private static final String COMMAND_FINDPHONEPREFIX_EXAMPLE = COMMAND_FINDPHONEPREFIX_WORD + " 98";
+
     private static final String COMMAND_LIST_WORD = "list";
     private static final String COMMAND_LIST_DESC = "Displays all persons as a list with index numbers.";
     private static final String COMMAND_LIST_EXAMPLE = COMMAND_LIST_WORD;
@@ -366,6 +372,8 @@ public class AddressBook {
             return executeAddPerson(commandArgs);
         case COMMAND_FIND_WORD:
             return executeFindPersons(commandArgs);
+        case COMMAND_FINDPHONEPREFIX_WORD:
+            return executeFindPhonePrefixPersons(commandArgs);
         case COMMAND_LIST_WORD:
             return executeListAllPersonsInAddressBook();
         case COMMAND_DELETE_WORD:
@@ -480,6 +488,47 @@ public class AddressBook {
         for (HashMap<PersonProperty, String> person : ALL_PERSONS) {
             final Set<String> wordsInName = new HashSet<>(splitByWhitespace(getNameFromPerson(person)));
             if (!Collections.disjoint(wordsInName, keywords)) {
+                matchedPersons.add(person);
+            }
+        }
+        return matchedPersons;
+    }
+
+    /**
+     * Finds and lists all persons in address book whose phone number starts with the argument prefix.
+     *
+     * @param commandArgs full command args string from the user
+     * @return feedback display message for the operation result
+     */
+    private static String executeFindPhonePrefixPersons(String commandArgs) {
+        if (!isPhonePrefixValid(commandArgs)) {
+            return getMessageForInvalidCommandInput(COMMAND_FINDPHONEPREFIX_WORD, getUsageInfoForFindPhonePrefixCommand());
+        }
+        final ArrayList<HashMap<PersonProperty, String>> personsFound = getPersonsWithPhoneNumberMatchingPrefix(commandArgs);
+        showToUser(personsFound);
+        return getMessageForPersonsDisplayedSummary(personsFound);
+    }
+
+    /**
+     * Verifies whether a string is a valid phone number prefix (ie. a single integer)
+     * @param commandArgs string to be checked
+     * @return true if the string is a valid phone number prefix and false otherwise
+     */
+    private static boolean isPhonePrefixValid(String commandArgs) {
+        return commandArgs.matches("\\d+");
+    }
+
+    /**
+     * Retrieves all persons in the full model whose phone number starting with the prefix
+     *
+     * @param prefix to search for
+     * @return list of persons in full model with phone number starting with the prefix
+     */
+    private static ArrayList<HashMap<PersonProperty, String>> getPersonsWithPhoneNumberMatchingPrefix(String prefix) {
+        final ArrayList<HashMap<PersonProperty, String>> matchedPersons = new ArrayList<>();
+        for (HashMap<PersonProperty, String> person : ALL_PERSONS) {
+            final String phoneNumber = getPhoneFromPerson(person);
+            if (phoneNumber.startsWith(prefix)) {
                 matchedPersons.add(person);
             }
         }
@@ -1093,6 +1142,13 @@ public class AddressBook {
         return String.format(MESSAGE_COMMAND_HELP, COMMAND_FIND_WORD, COMMAND_FIND_DESC) + LS
                 + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_FIND_PARAMETERS) + LS
                 + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_FIND_EXAMPLE) + LS;
+    }
+
+    /** Returns the string for showing 'findphoneprefix' command usage instruction */
+    private static String getUsageInfoForFindPhonePrefixCommand() {
+        return String.format(MESSAGE_COMMAND_HELP, COMMAND_FINDPHONEPREFIX_WORD, COMMAND_FINDPHONEPREFIX_DESC) + LS
+                + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_FINDPHONEPREFIX_PARAMETERS) + LS
+                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_FINDPHONEPREFIX_EXAMPLE) + LS;
     }
 
     /** Returns the string for showing 'delete' command usage instruction */
